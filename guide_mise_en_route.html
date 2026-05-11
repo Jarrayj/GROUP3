@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROBOT 2026 — Guide de Mise en Route</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ═══ VARIABLES ═══════════════════════════════════════════ */
+:root {
+  --bg:      #06080c;
+  --s1:      #0b0e16;
+  --s2:      #10151f;
+  --s3:      #161d2a;
+  --bd:      #1c2535;
+  --bd2:     #243040;
+  --ac:      #e8ff47;       /* jaune néon — couleur signature */
+  --ac2:     #ff4757;
+  --ac3:     #2ed573;
+  --ac4:     #1e90ff;
+  --ac5:     #ff6348;
+  --text:    #cdd6e8;
+  --muted:   #4a5a72;
+  --muted2:  #2a3545;
+}
+
+/* ═══ RESET & BASE ════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ═══ SCROLLBAR ═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bd2); border-radius: 2px; }
+
+/* ═══ HERO ════════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 80px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grille de fond animée */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--bd) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.35;
+  animation: gridPulse 8s ease-in-out infinite;
+}
+@keyframes gridPulse {
+  0%,100% { opacity:.35; }
+  50%      { opacity:.18; }
+}
+
+/* Blob lumineux */
+.hero-blob {
+  position: absolute;
+  width: 700px; height: 700px;
+  right: -150px; top: -150px;
+  background: radial-gradient(circle, rgba(232,255,71,.06) 0%, transparent 70%);
+  pointer-events: none;
+  animation: blobDrift 12s ease-in-out infinite alternate;
+}
+@keyframes blobDrift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(-60px, 80px) scale(1.1); }
+}
+
+.hero-tag {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: slideIn .7s .1s forwards;
+}
+.hero-tag::before {
+  content: '';
+  display: block;
+  width: 32px; height: 1px;
+  background: var(--ac);
+}
+
+.hero h1 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 6.5rem);
+  font-weight: 900;
+  line-height: .95;
+  letter-spacing: -2px;
+  max-width: 900px;
+  opacity: 0;
+  animation: slideIn .7s .25s forwards;
+}
+.hero h1 .hl { color: var(--ac); }
+.hero h1 .dim { opacity: .18; }
+
+.hero-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 560px;
+  margin-top: 28px;
+  opacity: 0;
+  animation: slideIn .7s .4s forwards;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 48px;
+  opacity: 0;
+  animation: slideIn .7s .55s forwards;
+}
+.stat { }
+.stat-n {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--ac);
+  line-height: 1;
+}
+.stat-l { font-size: 10px; color: var(--muted); letter-spacing: 2px; margin-top: 4px; }
+
+.hero-cta {
+  margin-top: 52px;
+  display: flex; gap: 12px;
+  opacity: 0;
+  animation: slideIn .7s .7s forwards;
+}
+.btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  padding: 14px 28px;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all .2s;
+  border: none;
+}
+.btn-primary {
+  background: var(--ac);
+  color: #000;
+  font-weight: 700;
+}
+.btn-primary:hover { background: #d4e840; transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--bd2);
+  color: var(--muted);
+}
+.btn-ghost:hover { border-color: var(--ac); color: var(--ac); }
+
+@keyframes slideIn {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ═══ PROGRESS BAR ════════════════════════════════════════ */
+.progress-strip {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(6,8,12,.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--bd);
+  padding: 0 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  gap: 24px;
+}
+.progress-label {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.progress-bar-wrap {
+  flex: 1;
+  height: 2px;
+  background: var(--bd);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--ac);
+  border-radius: 1px;
+  transition: width .4s ease;
+  width: 0%;
+}
+.progress-pct {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ac);
+  min-width: 38px;
+  text-align: right;
+}
+.phase-pills {
+  display: flex; gap: 4px;
+}
+.pill {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--bd2);
+  transition: background .3s;
+}
+.pill.done { background: var(--ac3); }
+.pill.active { background: var(--ac); box-shadow: 0 0 6px var(--ac); }
+
+/* ═══ PHASES MENU ═════════════════════════════════════════ */
+.phases-nav {
+  display: flex;
+  gap: 0;
+  padding: 0 80px;
+  border-bottom: 1px solid var(--bd);
+  background: var(--s1);
+  overflow-x: auto;
+}
+.phases-nav::-webkit-scrollbar { height: 2px; }
+.phase-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all .15s;
+  display: flex; align-items: center; gap: 7px;
+}
+.phase-btn .ph-num {
+  font-size: 8px;
+  background: var(--bd);
+  padding: 2px 5px;
+  border-radius: 2px;
+  color: var(--muted);
+}
+.phase-btn:hover { color: var(--text); }
+.phase-btn.active { color: var(--ac); border-bottom-color: var(--ac); }
+.phase-btn.active .ph-num { background: rgba(232,255,71,.12); color: var(--ac); }
+.phase-btn.complete .ph-num { background: rgba(46,213,115,.12); color: var(--ac3); }
+
+/* ═══ MAIN LAYOUT ═════════════════════════════════════════ */
+.main-wrap {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 104px);
+}
+
+/* ═══ SIDEBAR ═════════════════════════════════════════════ */
+.sidebar {
+  border-right: 1px solid var(--bd);
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+  padding: 24px 0;
+  background: var(--s1);
+}
+.sidebar::-webkit-scrollbar { width: 0; }
+
+.sb-phase-header {
+  padding: 12px 24px 6px;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+.sb-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 24px;
+  cursor: pointer;
+  transition: background .15s;
+  border-left: 2px solid transparent;
+}
+.sb-step:hover { background: var(--s2); }
+.sb-step.active {
+  background: rgba(232,255,71,.05);
+  border-left-color: var(--ac);
+}
+.sb-step.done { opacity: .5; }
+.sb-step.done .sb-dot { background: var(--ac3); }
+.sb-step.active .sb-dot { background: var(--ac); box-shadow: 0 0 8px var(--ac); }
+.sb-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--bd2);
+  flex-shrink: 0;
+}
+.sb-txt {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.sb-step.active .sb-txt { color: var(--text); }
+
+/* ═══ CONTENT AREA ════════════════════════════════════════ */
+.content {
+  padding: 0;
+}
+
+/* ═══ STEP CARD ═══════════════════════════════════════════ */
+.step-section {
+  border-bottom: 1px solid var(--bd);
+  padding: 56px 64px;
+  transition: background .3s;
+  scroll-margin-top: 60px;
+}
+.step-section.active-section {
+  background: rgba(232,255,71,.015);
+}
+
+.step-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+.step-number {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--bg);
+  background: var(--ac);
+  padding: 6px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+.step-number.phase-hardware { background: var(--ac4); color: #fff; }
+.step-number.phase-soft     { background: var(--ac3); color: #000; }
+.step-number.phase-calib    { background: var(--ac5); color: #fff; }
+.step-number.phase-test     { background: var(--ac2); color: #fff; }
+.step-number.phase-final    { background: var(--ac);  color: #000; }
+
+.step-title-wrap {}
+.step-phase-tag {
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.step-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+.step-duration {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-top: 10px;
+}
+.step-duration::before { content: '⏱'; }
+
+/* ═══ TASK CHECKLIST ══════════════════════════════════════ */
+.task-list { display: flex; flex-direction: column; gap: 8px; margin: 20px 0; }
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .18s;
+  user-select: none;
+}
+.task:hover { border-color: var(--bd2); background: var(--s3); }
+.task.done {
+  border-color: rgba(46,213,115,.25);
+  background: rgba(46,213,115,.03);
+}
+.task-check {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--bd2);
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  font-size: 11px;
+}
+.task.done .task-check {
+  background: var(--ac3);
+  border-color: var(--ac3);
+  color: #000;
+}
+.task-content { flex: 1; }
+.task-main {
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.5;
+  transition: opacity .15s;
+}
+.task.done .task-main { opacity: .45; text-decoration: line-through; }
+.task-detail {
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.6;
+}
+.task-tag {
+  font-size: 8px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-top: 6px;
+  display: inline-block;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.tag-warn { background: rgba(255,71,71,.1); color: var(--ac2); border: 1px solid rgba(255,71,71,.2); }
+.tag-tip  { background: rgba(30,144,255,.1); color: var(--ac4); border: 1px solid rgba(30,144,255,.2); }
+.tag-code { background: rgba(232,255,71,.08); color: var(--ac); border: 1px solid rgba(232,255,71,.15); }
+.tag-time { background: rgba(46,213,115,.08); color: var(--ac3); border: 1px solid rgba(46,213,115,.15); }
+
+/* ═══ CODE BLOCKS ═════════════════════════════════════════ */
+.code-block {
+  background: #020408;
+  border: 1px solid var(--bd);
+  border-left: 3px solid var(--ac);
+  border-radius: 3px;
+  padding: 20px 24px;
+  margin: 16px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.9;
+  position: relative;
+}
+.code-block .cb-label {
+  position: absolute;
+  top: 8px; right: 12px;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.kw { color: #ff79c6; }
+.fn { color: var(--ac); }
+.cm { color: #3a4a5e; font-style: italic; }
+.st { color: var(--ac3); }
+.nu { color: var(--ac5); }
+.tp { color: #ffb86c; }
+
+/* ═══ CALLOUT BOXES ═══════════════════════════════════════ */
+.callout {
+  display: flex;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 3px;
+  margin: 16px 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.callout-warn { background: rgba(255,71,71,.06); border-left: 3px solid var(--ac2); }
+.callout-ok   { background: rgba(46,213,115,.05); border-left: 3px solid var(--ac3); }
+.callout-info { background: rgba(232,255,71,.05); border-left: 3px solid var(--ac); }
+.callout-blue { background: rgba(30,144,255,.06); border-left: 3px solid var(--ac4); }
+.callout-icon { font-size: 18px; flex-shrink: 0; }
+.callout-text { color: #8a9ab8; }
+.callout-text strong { color: var(--text); }
+
+/* ═══ TIMER WIDGET ════════════════════════════════════════ */
+.timer-widget {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 4px;
+  padding: 20px 28px;
+  margin: 16px 0;
+  min-width: 200px;
+}
+.timer-display {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--ac);
+  letter-spacing: -2px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.timer-label { font-size: 9px; letter-spacing: 2px; color: var(--muted); margin-top: 6px; text-transform: uppercase; }
+.timer-btns { display: flex; gap: 8px; margin-top: 12px; }
+.tbtn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 6px 12px;
+  border: 1px solid var(--bd2);
+  border-radius: 2px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all .15s;
+}
+.tbtn:hover { border-color: var(--ac); color: var(--ac); }
+.tbtn.start { background: var(--ac); color: #000; border-color: var(--ac); font-weight: 700; }
+
+/* ═══ INFO GRID ═══════════════════════════════════════════ */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.info-card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 3px;
+  padding: 18px 20px;
+  transition: border-color .2s;
+}
+.info-card:hover { border-color: var(--bd2); }
+.ic-label { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+.ic-val { font-family: 'Unbounded', sans-serif; font-size: 1.1rem; font-weight: 700; }
+.ic-sub { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+/* ═══ PHASE SEPARATOR ═════════════════════════════════════ */
+.phase-sep {
+  padding: 40px 64px 20px;
+  border-bottom: 1px solid var(--bd);
+  background: var(--s1);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.phase-sep-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  opacity: .06;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.phase-sep-content {}
+.phase-sep-tag {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.phase-sep-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.phase-sep-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  max-width: 600px;
+  line-height: 1.7;
+}
+.phase-sep-meta {
+  margin-left: auto;
+  text-align: right;
+}
+.phase-sep-time {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.phase-sep-steps { font-size: 9px; color: var(--muted); margin-top: 4px; letter-spacing: 1.5px; }
+
+/* ═══ WIRING TABLE ════════════════════════════════════════ */
+.wt { font-size: 10.5px; }
+.wt td:first-child { color: var(--ac5); font-weight: 600; }
+.wt td:nth-child(3) { color: var(--ac3); }
+.wt td:last-child { color: var(--muted); font-size: 9.5px; }
+
+/* ═══ FINAL PANEL ═════════════════════════════════════════ */
+.final-panel {
+  background: linear-gradient(135deg, rgba(232,255,71,.04) 0%, transparent 60%);
+  border: 1px solid rgba(232,255,71,.15);
+  border-radius: 6px;
+  padding: 48px;
+  margin: 32px 0;
+  text-align: center;
+}
+.final-panel h2 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--ac);
+  margin-bottom: 12px;
+}
+.final-panel p { font-size: 13px; color: var(--muted); line-height: 1.8; }
+
+/* ═══ FLOATING TOTAL TIMER ════════════════════════════════ */
+.floating-timer {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: rgba(6,8,12,.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--bd2);
+  border-radius: 6px;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+.ft-label { font-size: 8px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+.ft-time {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--ac);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+}
+.ft-done { font-size: 9px; color: var(--muted); margin-top: 2px; }
+.ft-start {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  margin-top: 8px;
+  padding: 5px 12px;
+  background: var(--ac);
+  color: #000;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ═══ RESPONSIVE ══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .hero { padding: 60px 24px; }
+  .main-wrap { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .step-section { padding: 40px 24px; }
+  .phase-sep { padding: 28px 24px; }
+  .progress-strip { padding: 0 24px; }
+  .phases-nav { padding: 0 16px; }
+  .phase-sep-meta { display: none; }
+}
+
+/* ═══ SCROLL INDICATOR ════════════════════════════════════ */
+.scroll-ind {
+  position: absolute;
+  bottom: 36px; left: 80px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 9px; letter-spacing: 2px; color: var(--muted);
+  text-transform: uppercase;
+  animation: bounce 2s ease-in-out infinite;
+  opacity: 0;
+  animation: slideIn .7s .9s forwards, bounce 2s 1.5s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="top">
+  <div class="hero-blob"></div>
+  <div class="hero-tag">Robot Autonome 2026 — Guide de mise en route</div>
+  <h1>
+    DE LA BOÎTE<br>
+    <span class="hl">AU CONCOURS</span><br>
+    <span class="dim">EN TEMPS RECORD</span>
+  </h1>
+  <p class="hero-desc">
+    Chaque étape, dans l'ordre, avec le temps estimé.
+    Coche en avançant. Zéro improvisation.
+    Le robot fonctionne quand la liste est vide.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-n" id="totalTasks">47</div>
+      <div class="stat-l">Tâches totales</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">5</div>
+      <div class="stat-l">Phases clés</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">~14h</div>
+      <div class="stat-l">Temps estimé</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" id="doneCount">0</div>
+      <div class="stat-l">Complétées</div>
+    </div>
+  </div>
+  <div class="hero-cta">
+    <a href="#phase1" class="btn btn-primary">▶ COMMENCER</a>
+    <button class="btn btn-ghost" onclick="resetAll()">↺ Tout réinitialiser</button>
+  </div>
+  <div class="scroll-ind">↓ &nbsp; Défiler pour commencer</div>
+</section>
+
+<!-- ══════════════════ PROGRESS BAR ══════════════════ -->
+<div class="progress-strip">
+  <span class="progress-label">Progression</span>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <span class="progress-pct" id="progressPct">0%</span>
+  <div class="phase-pills" id="phasePills">
+    <div class="pill" title="Phase 1"></div>
+    <div class="pill" title="Phase 2"></div>
+    <div class="pill" title="Phase 3"></div>
+    <div class="pill" title="Phase 4"></div>
+    <div class="pill" title="Phase 5"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ PHASES NAV ══════════════════ -->
+<nav class="phases-nav">
+  <button class="phase-btn active" onclick="scrollToPhase('phase1',this)"><span class="ph-num">01</span>Réception & Inventaire</button>
+  <button class="phase-btn" onclick="scrollToPhase('phase2',this)"><span class="ph-num">02</span>Assemblage Mécanique</button>
+  <button class="phase-btn" onclick="scrollToPhase('phase3',this)"><span class="ph-num">03</span>Câblage Électronique</button>
+  <button class="phase-btn" onclick="scrollToPhase('phase4',this)"><span class="ph-num">04</span>Programmation</button>
+  <button class="phase-btn" onclick="scrollToPhase('phase5',this)"><span class="ph-num">05</span>Calibration & Tests</button>
+</nav>
+
+<!-- ══════════════════ MAIN LAYOUT ══════════════════ -->
+<div class="main-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <!-- Populated by JS -->
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content" id="mainContent">
+
+    <!-- ════════════ PHASE 1 ════════════ -->
+    <div class="phase-sep" id="phase1">
+      <div class="phase-sep-num">01</div>
+      <div class="phase-sep-content">
+        <div class="phase-sep-tag" style="color:var(--ac4)">// Phase 1</div>
+        <div class="phase-sep-title" style="color:var(--ac4)">Réception & Inventaire</div>
+        <div class="phase-sep-desc">Dès que la boîte arrive — ouvrir, vérifier, commander les manquants. Ne jamais commencer l'assemblage sans avoir tous les composants.</div>
+      </div>
+      <div class="phase-sep-meta">
+        <div class="phase-sep-time" style="color:var(--ac4)">~1h30</div>
+        <div class="phase-sep-steps">7 étapes</div>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-section" id="step-1" data-phase="1">
+      <div class="step-header">
+        <div class="step-number phase-hardware">01</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac4)">// Réception</div>
+          <div class="step-title">Ouvrir la boîte & photographier</div>
+          <div class="step-duration">15 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Photographier le contenu AVANT de toucher quoi que ce soit</div><div class="task-detail">Preuve en cas de pièce manquante auprès du distributeur Makeblock</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Conserver tous les sachets zip dans une boîte compartimentée</div><div class="task-detail">Les petites vis M4×8 et M3×8 se mélangent facilement — les trier immédiatement</div><div class="task-tag tag-warn">⚠️ Critique</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Créer le dépôt GitHub du projet (repo privé, inviter tous les membres)</div><div class="task-detail">Structure : /code /hardware /docs /calibration — commit initial avec README</div><div class="task-tag tag-code">GitHub</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-section" id="step-2" data-phase="1">
+      <div class="step-header">
+        <div class="step-number phase-hardware">02</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac4)">// Inventaire</div>
+          <div class="step-title">Vérification inventaire Makeblock Kit</div>
+          <div class="step-duration">45 min</div>
+        </div>
+      </div>
+      <div class="callout callout-info">
+        <span class="callout-icon">📋</span>
+        <div class="callout-text">Cocher chaque pièce de la liste officielle Makeblock Ultimate Robot Kit. Tout ce qui est absent doit être commandé <strong>dans les 24h</strong> — les livraisons prennent 2–5 jours.</div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Vérifier les moteurs DC-37 ×2 + DC-25 ×1 (+ câbles moteurs)</div><div class="task-detail">Tester à la main : les engrenages doivent tourner librement sans jeu excessif</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Vérifier Me Dual Motor Driver + Me RGB Line Follower + Me RJ25 Adapter</div><div class="task-detail">Inspecter les connecteurs RJ25 — une broche tordue = capteur mort</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Vérifier châssis, chenilles, poulies, courroies (36 chenilles + 36 axes)</div><div class="task-detail">Compter les axes de chenilles — souvent des manquants dans les kits</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Commander immédiatement les composants additionnels manquants</div><div class="task-detail">Arduino UNO R3, Grove Base Shield V2, Capteur couleur I²C, LCD RGB, Ultrason Grove, Encodeurs ×2, Servo Grove, Ruban 30 LEDs, Moteur DC-25 supplémentaire</div><div class="task-tag tag-warn">Commander sous 24h</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-section" id="step-3" data-phase="1">
+      <div class="step-header">
+        <div class="step-number phase-hardware">03</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac4)">// Setup</div>
+          <div class="step-title">Installer l'environnement de développement</div>
+          <div class="step-duration">30 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Télécharger et installer Arduino IDE 2.x</div><div class="task-detail">arduino.cc/en/software — version 2.3+ recommandée (autocomplete intégré)</div><div class="task-tag tag-code">arduino.cc</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Installer les bibliothèques Arduino nécessaires (Gestionnaire de bibliothèques)</div><div class="task-detail">Adafruit_TCS34725 · Adafruit_NeoPixel · Grove_LCD_RGB_Backlight · Servo (incluse) · Wire (incluse)</div><div class="task-tag tag-code">IDE → Outils → Bibliothèques</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Tester l'upload sur Arduino UNO R3 (clignoter la LED built-in)</div><div class="task-detail">File → Examples → Basics → Blink → Upload. Si ça marche, le driver USB est OK.</div><div class="task-tag tag-tip">🔵 Test rapide 2 min</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Créer le fichier robot_main.ino sur GitHub et cloner en local</div><div class="task-detail">Travailler sur des branches : git checkout -b feature/fsm-base</div></div></div>
+      </div>
+    </div>
+
+    <!-- ════════════ PHASE 2 ════════════ -->
+    <div class="phase-sep" id="phase2">
+      <div class="phase-sep-num">02</div>
+      <div class="phase-sep-content">
+        <div class="phase-sep-tag" style="color:var(--ac5)">// Phase 2</div>
+        <div class="phase-sep-title" style="color:var(--ac5)">Assemblage Mécanique</div>
+        <div class="phase-sep-desc">Construire le robot base Makeblock selon le manuel, puis ajouter les modules custom (lanceur, cache capteurs, supports Grove). Travailler à 2 : un lit, l'autre assemble.</div>
+      </div>
+      <div class="phase-sep-meta">
+        <div class="phase-sep-time" style="color:var(--ac5)">~4h</div>
+        <div class="phase-sep-steps">9 étapes</div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-section" id="step-4" data-phase="2">
+      <div class="step-header">
+        <div class="step-number phase-hardware" style="background:var(--ac5)">04</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac5)">// Mécanique</div>
+          <div class="step-title">Assemblage du châssis Makeblock (étapes 1–12)</div>
+          <div class="step-duration">1h30</div>
+        </div>
+      </div>
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-text"><strong>Clé Allen 2.5mm obligatoire</strong> pour les vis sans tête M3×5 (Headless Set Screw). Ne pas serrer à fond les vis de roulements — laisser légèrement jeu pour éviter grippage des chenilles.</div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Étapes 1–6 manuel Makeblock : montage des plaques de base + supports moteur</div><div class="task-detail">Utiliser M4×14 pour les plaques. Identifier les Beam 0824-64/80/96/144 avant de commencer.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Étapes 7–10 : montage des moteurs DC-37 + courroies + roues</div><div class="task-detail">Courroie Timing 98MXL pour l'entraînement. Tendre manuellement en ajustant le support Bracket 3×6.</div><div class="task-tag tag-warn">Tension courroie = critique</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Étapes 11–20 : montage chenilles (36 maillons chaque côté)</div><div class="task-detail">Assembler les chenilles AVANT de les poser sur le robot. Vérifier la tension — ni trop lâche ni trop tendue.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Test manuel : faire tourner chaque chenille à la main — doit être fluide</div><div class="task-detail">Si blocage : vérifier alignement des axes de transmission (D Shaft 4×128mm)</div><div class="task-tag tag-tip">🔵 Test avant câblage</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step-section" id="step-5" data-phase="2">
+      <div class="step-header">
+        <div class="step-number phase-hardware" style="background:var(--ac5)">05</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac5)">// Mécanique</div>
+          <div class="step-title">Montage de la base électronique</div>
+          <div class="step-duration">45 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Fixer la BaseBracket Makeblock + Battery Holder 6×AA sur le châssis</div><div class="task-detail">Le porte-batterie doit être accessible facilement pour changer les piles. Centré bas = centre de gravité bas = stabilité rampe.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Poser l'Arduino UNO R3 + Grove Base Shield V2 sur la plateforme principale</div><div class="task-detail">Utiliser des entretoises Nylon M3×30 pour suréléver l'Arduino. Le Shield s'enfiche directement dessus.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Positionner le Me Dual Motor Driver adjacent à l'Arduino</div><div class="task-detail">Câbles moteurs les plus courts possible → moins d'EMI. Anneaux ferrite sur chaque câble moteur DC-37.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Fixer les encodeurs optiques Grove sur les axes moteurs gauche et droit</div><div class="task-detail">Aligner le disque encodeur dans l'espace de la fourche optique. Gap = 1–2mm.</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step-section" id="step-6" data-phase="2">
+      <div class="step-header">
+        <div class="step-number phase-hardware" style="background:var(--ac5)">06</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac5)">// Capteurs</div>
+          <div class="step-title">Montage des capteurs & actionneurs</div>
+          <div class="step-duration">45 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Fixer le Me RGB Line Follower à l'avant bas du châssis (via câble RJ25)</div><div class="task-detail">Hauteur idéale : 8–12mm du sol. Centré par rapport à l'axe longitudinal du robot.</div><div class="task-tag tag-warn">Hauteur critique !</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Fixer l'Ultrason Grove V2.0 à l'avant, centré, à hauteur d'obstacles (18.5cm)</div><div class="task-detail">Les obstacles O1/O2 font H=18.5cm. L'ultrason doit viser leur milieu ≈ 9cm de hauteur.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Fixer le capteur couleur TCS34725 sur le côté gauche avant, orienté vers l'avant</div><div class="task-detail">Distance de lecture optimale : 5–8cm du panneau couleur. Prévoir un bras réglable en PLA imprimé.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Fixer le LCD Grove RGB 2×16 sur le dessus du robot, visible de loin</div><div class="task-detail">Incliné à 20° vers l'avant pour lecture pendant le parcours.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Fixer le ruban 30 LEDs RGB sur le flanc gauche du robot</div><div class="task-detail">Sortie en spirale depuis D6 via résistance 470Ω. Laisser l'alimentation séparée accessible.</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="step-section" id="step-7" data-phase="2">
+      <div class="step-header">
+        <div class="step-number phase-hardware" style="background:var(--ac5)">07</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac5)">// Lanceur</div>
+          <div class="step-title">Montage du lanceur de balle squash</div>
+          <div class="step-duration">1h</div>
+        </div>
+      </div>
+      <div class="callout callout-blue">
+        <span class="callout-icon">🖨️</span>
+        <div class="callout-text"><strong>Impression 3D requise</strong> : bras de lanceur (200mm longueur, pivot à 70mm, godet ∅42mm). Épaisseur 3mm, largeur 20mm. Fichier STL à créer sur Fusion 360. Temps impression ≈ 2h à 0.2mm / 20% remplissage.</div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Imprimer en 3D le bras de lanceur PLA (40cm³ alloués)</div><div class="task-detail">Paramètres : 3 périmètres, 20% gyroïde, couche 0.2mm. PLA+ recommandé pour la résistance aux chocs.</div><div class="task-tag tag-time">⏱ 2h impression</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Monter le servo Grove Analog sur le support du lanceur</div><div class="task-detail">Position repos = 0°. La goupille doit bloquer le bras armé. Tester manuellement la libération.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Installer le ressort (k ≈ 30 N/m) en compression sous le bras</div><div class="task-detail">Tester 3 compressions différentes (3cm / 5cm / 7cm) et noter la portée approximative à blanc.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Vérifier que la balle squash ∅40.5mm tient dans le godet sans tomber</div><div class="task-detail">Si elle tombe : agrandir le rebord du godet ou ajouter un petit velcro amovible.</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 8 — Coque -->
+    <div class="step-section" id="step-8" data-phase="2">
+      <div class="step-header">
+        <div class="step-number phase-hardware" style="background:var(--ac5)">08</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac5)">// Coque</div>
+          <div class="step-title">Thermoformage coque PS Choc</div>
+          <div class="step-duration">45 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Découper les gabarits papier pour flancs (300×120mm) et avant (200×80mm)</div><div class="task-detail">Reporter sur PS Choc 1.5mm avec marqueur permanent. Découper au cutter sur planche de découpe.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Thermoformer le carénage avant (inclinaison 30° pour déflection obstacles)</div><div class="task-detail">Four à 120°C pendant 3–4 min, puis former sur moule bois. Maintenir jusqu'à refroidissement complet.</div><div class="task-tag tag-warn">⚠️ Gants obligatoires</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Découper et plier le cache anti-reflets du suiveur de ligne (PS Choc noir)</div><div class="task-detail">100×20×15mm — entoure le capteur sur 3 côtés pour bloquer la lumière latérale et solaire.</div><div class="task-tag tag-warn">⚠️ Absolument nécessaire en plein soleil</div></div></div>
+      </div>
+    </div>
+
+    <!-- ════════════ PHASE 3 ════════════ -->
+    <div class="phase-sep" id="phase3">
+      <div class="phase-sep-num">03</div>
+      <div class="phase-sep-content">
+        <div class="phase-sep-tag" style="color:var(--ac3)">// Phase 3</div>
+        <div class="phase-sep-title" style="color:var(--ac3)">Câblage Électronique</div>
+        <div class="phase-sep-desc">Connecter tous les composants à l'Arduino. Procéder composant par composant. Ne JAMAIS alimenter avant d'avoir tout vérifié deux fois.</div>
+      </div>
+      <div class="phase-sep-meta">
+        <div class="phase-sep-time" style="color:var(--ac3)">~2h30</div>
+        <div class="phase-sep-steps">8 étapes</div>
+      </div>
+    </div>
+
+    <!-- STEP 9 -->
+    <div class="step-section" id="step-9" data-phase="3">
+      <div class="step-header">
+        <div class="step-number phase-soft" style="background:var(--ac3)">09</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac3)">// Câblage</div>
+          <div class="step-title">Câblage moteurs & alimentation</div>
+          <div class="step-duration">30 min</div>
+        </div>
+      </div>
+      <div class="callout callout-warn">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-text"><strong>Ordre impératif :</strong> 1) GND commun en premier, 2) alimentations, 3) signaux. Ne jamais brancher/débrancher pendant que l'Arduino est sous tension.</div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Relier GND batterie → GND Arduino → GND Motor Driver → GND alim LED (masse commune)</div><div class="task-detail">Un seul point de masse commun évite les boucles de masse et les parasites moteurs.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Brancher DC Motor-37 GAUCHE → Motor Driver M1 OUT (avec anneau ferrite)</div><div class="task-detail">D5(PWM) → ENA vitesse | D8 → IN1 direction</div><div class="task-tag tag-code">D5=PWM_G | D8=DIR_G</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Brancher DC Motor-37 DROITE → Motor Driver M2 OUT (avec anneau ferrite)</div><div class="task-detail">D11(PWM) → ENB vitesse | D12 → IN2 direction</div><div class="task-tag tag-code">D11=PWM_D | D12=DIR_D</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Brancher alimentation séparée 5V/2A pour le ruban LED (GND commun Arduino)</div><div class="task-detail">100µF condensateur en parallèle sur VCC/GND du ruban, au plus près du premier LED.</div><div class="task-tag tag-warn">⚠️ Jamais depuis 5V Arduino</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 10 -->
+    <div class="step-section" id="step-10" data-phase="3">
+      <div class="step-header">
+        <div class="step-number phase-soft" style="background:var(--ac3)">10</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac3)">// Câblage</div>
+          <div class="step-title">Câblage capteurs sur Grove Shield</div>
+          <div class="step-duration">40 min</div>
+        </div>
+      </div>
+      <table class="wt" style="margin:16px 0">
+        <thead><tr><th>Composant</th><th>Port Grove</th><th>Pin Arduino</th><th>Précaution</th></tr></thead>
+        <tbody>
+          <tr><td>Line Follower RGB</td><td>D13</td><td>D13</td><td>Câble RJ25 + adaptateur Me</td></tr>
+          <tr><td>Ultrason Grove V2</td><td>D7</td><td>D7</td><td>Pin unique Trig+Echo</td></tr>
+          <tr><td>Encodeur GAUCHE</td><td>D2 (INT0)</td><td>D2</td><td>⚠️ INT obligatoire</td></tr>
+          <tr><td>Encodeur DROITE</td><td>D3 (INT1)</td><td>D3</td><td>⚠️ INT obligatoire</td></tr>
+          <tr><td>Servo lanceur</td><td>D9~</td><td>D9</td><td>PWM obligatoire</td></tr>
+          <tr><td>Ruban LED DIN</td><td>D6~</td><td>D6 + R470Ω</td><td>Résistance série !</td></tr>
+          <tr><td>Bouton START</td><td>D4</td><td>D4</td><td>INPUT_PULLUP + GND</td></tr>
+          <tr><td>Capteur couleur SDA/SCL</td><td>I²C</td><td>A4/A5</td><td>⚠️ 3.3V uniquement !</td></tr>
+          <tr><td>LCD RGB SDA/SCL</td><td>I²C</td><td>A4/A5</td><td>Adresse 0x3E/0x62</td></tr>
+        </tbody>
+      </table>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Brancher le capteur couleur TCS34725 en 3.3V (vérifier au multimètre avant)</div><div class="task-detail">Mesurer la tension sur VCC du capteur avec multimètre AVANT d'allumer → doit afficher 3.3V</div><div class="task-tag tag-warn">⚠️ 5V = destruction instantanée</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Brancher les encodeurs sur D2 et D3 (seules pins INT sur UNO)</div><div class="task-detail">Ne pas les mettre sur D4/D5/etc. — les interruptions matérielles ne fonctionnent que sur D2 et D3.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Ajouter résistance 470Ω en série sur D6 → DIN du ruban LED</div><div class="task-detail">Protège contre les réflexions du signal WS2812B. Sans elle : corruption du signal, LEDs qui clignotent aléatoirement.</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 11 — Chrono circuit -->
+    <div class="step-section" id="step-11" data-phase="3">
+      <div class="step-header">
+        <div class="step-number phase-soft" style="background:var(--ac3)">11</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac3)">// Électronique</div>
+          <div class="step-title">Circuit chronométrage NE555 sur breadboard puis PCB</div>
+          <div class="step-duration">3h</div>
+        </div>
+      </div>
+      <div class="callout callout-info">
+        <span class="callout-icon">📐</span>
+        <div class="callout-text">Faire d'abord sur <strong>plaque Labdec (breadboard)</strong> pour tester, PUIS réaliser le typon KiCad et graver le PCB final.</div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Breadboard étape 1 : câbler NE555 en astable (R1=1kΩ, R2=68kΩ, C=10µF)</div><div class="task-detail">Vérifier la fréquence avec l'oscilloscope ou avec une LED qui clignote à 1 Hz (~1 flash/seconde)</div><div class="task-tag tag-tip">🔵 Test : LED clignote à 1Hz ?</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Breadboard étape 2 : ajouter CD4013 — SET=bouton A, RST=bouton B, Q→LED</div><div class="task-detail">LED allumée quand A pressé, éteinte quand B pressé → déclenchement validé</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Breadboard étape 3 : porte ET (AND) — Q(4013) × CLK(555) → CD4518 CLK1</div><div class="task-detail">Le comptage ne s'incrémente que quand Q=1 (chrono actif). Vérifier sur LED de test.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Breadboard étape 4 : CD4518 BCD + CD4511×2 + afficheurs 7-segments + R330Ω</div><div class="task-detail">L'afficheur unités doit compter 0→9 puis reporter sur les dizaines. Test : laisser tourner 30 secondes.</div><div class="task-tag tag-time">⏱ Test 30 sec minimum</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Test final circuit complet : déclencher avec barrière IR simulée, vérifier start/stop</div><div class="task-detail">Passer la main devant les deux barrières IR. Le chrono doit démarrer et s'arrêter précisément.</div><div class="task-tag tag-tip">✅ Valider avant PCB</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Concevoir le typon PCB sur KiCad puis réaliser la carte (tirer, percer, souder)</div><div class="task-detail">Taille imposée par le cahier des charges. CI sur supports tulipes. Pistes min 0.8mm.</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 12 — Passerelle -->
+    <div class="step-section" id="step-12" data-phase="3">
+      <div class="step-header">
+        <div class="step-number phase-soft" style="background:var(--ac3)">12</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac3)">// Structure</div>
+          <div class="step-title">Construction de la passerelle bâtonnets</div>
+          <div class="step-duration">3h</div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-card"><div class="ic-label">Matériau</div><div class="ic-val" style="color:var(--ac5)">150 bât.</div><div class="ic-sub">10×114×2mm bois</div></div>
+        <div class="info-card"><div class="ic-label">Portée</div><div class="ic-val">900 mm</div><div class="ic-sub">Bande PS Choc fournie</div></div>
+        <div class="info-card"><div class="ic-label">Largeur roulage</div><div class="ic-val">300 mm</div><div class="ic-sub">Robot max 280mm</div></div>
+        <div class="info-card"><div class="ic-label">Structure</div><div class="ic-val" style="color:var(--ac3)">Warren</div><div class="ic-sub">Double nappe treillis</div></div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Imprimer le gabarit A3 à l'échelle 1:1 (triangles Warren 60mm de base)</div><div class="task-detail">Envoyer le fichier PDF à imprimer en A3. Coller sur planche bois 10mm. Planter des pointes de repère.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Construire longerons supérieurs ×2 (16 bâtonnets, bout-à-bout)</div><div class="task-detail">Superposer 2 bâtonnets avec décalage de 57mm pour éviter joints alignés. Colle chaude + vis M2.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Construire longerons inférieurs ×2 (16 bâtonnets)</div><div class="task-detail">Identique aux supérieurs — ces 4 longerons forment l'ossature principale.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Poser diagonales treillis Warren (30 bâtonnets alternés à 60°)</div><div class="task-detail">Coller sur le gabarit une diagonale à la fois. Laisser sécher 10 min avant d'ajouter la suivante.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Poser les montants verticaux (10 bâtonnets, tous les 60mm)</div><div class="task-detail">Stabilise la structure contre le flambement latéral sous charge du robot.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Poser plancher de roulage (18 bâtonnets transversaux, jointifs)</div><div class="task-detail">Surface plane pour les chenilles. Coller en appuyant fort pendant 5 min.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Installer crochet central (vis M2 en U inversé) pour test mécanique jury</div><div class="task-detail">Position exacte : milieu de la portée (450mm). Doit supporter 150N = 15kg.</div><div class="task-tag tag-warn">⚠️ Requis par le cahier des charges</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Test mécanique : poser le robot (1.2kg) en traversant 3 fois, puis charger progressivement</div><div class="task-detail">Mesurer la flèche d sous 15N. Calculer k et r. Si k insuffisant : renforcer nœuds avec vis M2.</div><div class="task-tag tag-time">⏱ 15 min de test</div></div></div>
+      </div>
+    </div>
+
+    <!-- ════════════ PHASE 4 ════════════ -->
+    <div class="phase-sep" id="phase4">
+      <div class="phase-sep-num">04</div>
+      <div class="phase-sep-content">
+        <div class="phase-sep-tag" style="color:var(--ac)">// Phase 4</div>
+        <div class="phase-sep-title" style="color:var(--ac)">Programmation Arduino</div>
+        <div class="phase-sep-desc">Coder la FSM par sections dans l'ordre. Tester chaque état indépendamment avant de passer au suivant. Committer sur GitHub après chaque état validé.</div>
+      </div>
+      <div class="phase-sep-meta">
+        <div class="phase-sep-time" style="color:var(--ac)">~3h</div>
+        <div class="phase-sep-steps">10 étapes</div>
+      </div>
+    </div>
+
+    <!-- STEP 13 -->
+    <div class="step-section" id="step-13" data-phase="4">
+      <div class="step-header">
+        <div class="step-number">13</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac)">// Code</div>
+          <div class="step-title">Structure FSM + utilitaires de base</div>
+          <div class="step-duration">45 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Créer le fichier principal avec l'enum EtatRobot et toutes les #define</div><div class="task-detail">Copier-coller la structure FSM depuis le cahier de conception. Un état = une fonction dédiée.</div><div class="task-tag tag-code">robot_main.ino</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Coder mesureUltrason(), setMoteurs(), arreterMoteurs(), changerEtat()</div><div class="task-detail">Tester setMoteurs() immédiatement : les deux chenilles doivent tourner dans le bon sens.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Coder les ISR encodeurs (isr_encG, isr_encD) + test de comptage</div><div class="task-detail">Serial.println(enc_g) dans le loop. Pousser le robot à la main et vérifier que les compteurs s'incrémentent.</div><div class="task-tag tag-tip">🔵 Test : pousser robot → compter tops</div></div></div>
+      </div>
+      <div class="code-block">
+        <div class="cb-label">Arduino C++</div>
+<span class="cm">// Structure FSM minimale à coder en premier</span>
+<span class="kw">enum</span> <span class="tp">EtatRobot</span> {
+  S0_INIT, S1_LIGNE1, S2_TUNNEL,
+  S3_OBS1, S4_OBS2, S5_MONTEE,
+  S6_COULEUR, S7_RETOUR, S8_CHRONO,
+  S9_PASSERELLE, S10_DISTANCE, S11_LANCEUR, S_FIN
+};
+
+<span class="tp">EtatRobot</span> etat = S0_INIT;
+<span class="tp">volatile long</span> enc_g = <span class="nu">0</span>, enc_d = <span class="nu">0</span>;
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">switch</span>(etat) {
+    <span class="kw">case</span> S0_INIT:    <span class="fn">etat_init</span>();    <span class="kw">break</span>;
+    <span class="kw">case</span> S1_LIGNE1:  <span class="fn">etat_ligne1</span>(); <span class="kw">break</span>;
+    <span class="cm">// ... autres états</span>
+  }
+}</div>
+    </div>
+
+    <!-- STEP 14 -->
+    <div class="step-section" id="step-14" data-phase="4">
+      <div class="step-header">
+        <div class="step-number">14</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac)">// Code</div>
+          <div class="step-title">Coder S1 : suivi de ligne PD + virages</div>
+          <div class="step-duration">30 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Coder la fonction lireErreurLigne() avec le Me RGB Line Follower</div><div class="task-detail">Retourne une valeur entre -3 et +3. Positif = ligne à droite. Négatif = ligne à gauche.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Implémenter le régulateur PD : correction = Kp×err + Kd×(err-err_prev)</div><div class="task-detail">Commencer avec Kp=1.0 Kd=0. Tester sur une ligne droite. Ajouter Kd=0.3 pour amortir.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Coder tournerDroite90() et tournerGauche90() basés sur encodeurs</div><div class="task-detail">~6 tops encodeur = 90° (à valider physiquement). Utiliser while(enc_d - ref &lt; TOPS_90)</div><div class="task-tag tag-warn">⚠️ Bloquer le loop — ok pour prototype</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Test terrain : robot suit une ligne droite, puis un virage 90°</div><div class="task-detail">Si oscillations : Kp trop fort. Si trop lent à se corriger : Kp trop faible. Ajuster par pas de 0.1.</div><div class="task-tag tag-time">⏱ 20 min de test terrain</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 15 -->
+    <div class="step-section" id="step-15" data-phase="4">
+      <div class="step-header">
+        <div class="step-number">15</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac)">// Code</div>
+          <div class="step-title">Coder S2–S4 : tunnel + contournements obstacles</div>
+          <div class="step-duration">45 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S2 Tunnel : avancer en ligne droite ~220cm (encodeurs) sans suivre la ligne</div><div class="task-detail">Compter les tops : 220cm / 1.956cm/top ≈ 113 tops. Ajouter 10% de marge.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S3/S4 : sous-FSM de contournement avec 5 sous-états (stop→tourner→avancer×3→reprendre)</div><div class="task-detail">O1 = contourner GAUCHE. O2 = contourner DROITE. Distance latérale = 60cm (44cm obstacle + 16cm marge).</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Test avec obstacle réel (carton 44×33×18.5cm) sur le parcours</div><div class="task-detail">Vérifier que le robot ne touche JAMAIS l'obstacle. Si marge insuffisante → augmenter distance de contournement.</div><div class="task-tag tag-warn">⚠️ Pénalités si contact</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 16 -->
+    <div class="step-section" id="step-16" data-phase="4">
+      <div class="step-header">
+        <div class="step-number">16</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac)">// Code</div>
+          <div class="step-title">Coder S5–S6 : rampe + couleur + LEDs</div>
+          <div class="step-duration">30 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S5 Rampe R1 : augmenter PWM à 220 pour gravir la pente 8°</div><div class="task-detail">Détecter entrée rampe via encodeurs (distance depuis dernier repère). Retour PWM normal au sommet.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S6 Couleur : TCS34725 → getRawData() → normaliser → identifier rouge/vert/bleu</div><div class="task-detail">Calibrer les seuils sur le PANNEAU RÉEL sous l'éclairage de la volière. Consigner les valeurs dans le code.</div><div class="task-tag tag-warn">⚠️ Calibrer sur place</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S6 LEDs : NeoPixel clignoter couleur à 2Hz pendant 3s, robot à l'arrêt</div><div class="task-detail">Utiliser millis() — pas de delay(). Fréquence = Math.floor(millis()/500) % 2</div><div class="task-tag tag-code">millis() non-bloquant</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 17 -->
+    <div class="step-section" id="step-17" data-phase="4">
+      <div class="step-header">
+        <div class="step-number">17</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac)">// Code</div>
+          <div class="step-title">Coder S7–S11 : retour, chrono, passerelle, tir</div>
+          <div class="step-duration">45 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S7 : demi-tour 180° + descente R1 + virage V4 (utiliser tops encodeur)</div><div class="task-detail">Demi-tour = 2 × tops_90°. Vérifier que le robot retrouve bien la ligne L5.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S8 : générer signal START sur pin de sortie (→ circuit chrono externe) quand barrière B1</div><div class="task-detail">Le circuit NE555/CD4013 externe gère le chrono — le robot n'a qu'à envoyer un front pour déclencher B1 simulé.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S9 Passerelle : PWM réduit à 150 + suivi de ligne lent pour stabilité</div><div class="task-detail">Trop vite sur la passerelle = oscillations = chute. Tester au moins 5 traversées.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S10 : mesurer distance panier (5 moyennes ultrason) + afficher sur LCD rgb_lcd</div><div class="task-detail">lcd.clear() → lcd.print("Dist: "+dist+"cm"). Mettre rétroéclairage vert si mesure OK.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">S11 : servo.write(60°) → attendre 200ms → servo.write(0°) → fin parcours</div><div class="task-detail">Tester le déclenchement 10 fois. La balle doit partir systématiquement.</div><div class="task-tag tag-time">⏱ 10 tirs de test</div></div></div>
+      </div>
+    </div>
+
+    <!-- ════════════ PHASE 5 ════════════ -->
+    <div class="phase-sep" id="phase5">
+      <div class="phase-sep-num">05</div>
+      <div class="phase-sep-content">
+        <div class="phase-sep-tag" style="color:var(--ac2)">// Phase 5</div>
+        <div class="phase-sep-title" style="color:var(--ac2)">Calibration & Tests Finaux</div>
+        <div class="phase-sep-desc">La phase la plus longue en pratique. Tout doit être testé sur le sol RÉEL du concours (linoléum clair). Prévoir 2 sessions de test terrain.</div>
+      </div>
+      <div class="phase-sep-meta">
+        <div class="phase-sep-time" style="color:var(--ac2)">~3h</div>
+        <div class="phase-sep-steps">8 étapes</div>
+      </div>
+    </div>
+
+    <!-- STEP 18 -->
+    <div class="step-section" id="step-18" data-phase="5">
+      <div class="step-header">
+        <div class="step-number phase-final" style="background:var(--ac2)">18</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac2)">// Calibration</div>
+          <div class="step-title">Calibration suiveur de ligne sur sol réel</div>
+          <div class="step-duration">30 min</div>
+        </div>
+      </div>
+      <div class="callout callout-warn">
+        <span class="callout-icon">🔆</span>
+        <div class="callout-text"><strong>Obligatoire sur le sol de la volière (linoléum clair)</strong>. Les seuils mesurés à la maison ne seront pas les mêmes. Se déplacer sur le lieu du concours au moins 48h avant.</div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Lire les valeurs brutes du Line Follower via Serial.println() sur sol clair + sur ligne noire</div><div class="task-detail">Noter : val_sur_fond_clair ≈ X, val_sur_ligne_noire ≈ Y. Seuil = (X+Y)/2.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Ajuster le seuil dans le code + tester suivi ligne droite 2m sans déviation</div><div class="task-detail">Si le robot zigzague sur ligne droite : Kp trop fort. Si il sort de la ligne : Kp trop faible.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Vérifier le cache anti-reflets — tester en plein soleil si possible</div><div class="task-detail">Pointer une lampe torche vers le capteur. Si le robot perd la ligne = cache insuffisant.</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 19 -->
+    <div class="step-section" id="step-19" data-phase="5">
+      <div class="step-header">
+        <div class="step-number phase-final" style="background:var(--ac2)">19</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac2)">// Calibration</div>
+          <div class="step-title">Calibration capteur couleur + table lanceur</div>
+          <div class="step-duration">30 min</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Mesurer rn/gn/bn sur le panneau rouge, vert et bleu réels avec Serial.println()</div><div class="task-detail">À 5–8cm du panneau, sous éclairage réel. Consigner les 9 valeurs dans un fichier.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Mettre à jour les seuils identifierCouleur() et vérifier les 3 couleurs</div><div class="task-detail">Tester 5 fois chaque couleur. Le taux de succès doit être 5/5. Si non → affiner les seuils.</div><div class="task-tag tag-warn">⚠️ 100% requis</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Plan d'expérience lanceur : tirer 3 fois à chaque distance (1m / 1.5m / 2m / 2.5m / 3m)</div><div class="task-detail">Noter la compression ressort utilisée. Construire la table. Plastifier et coller dans le robot.</div><div class="task-tag tag-time">⏱ 30 tirs total</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 20 -->
+    <div class="step-section" id="step-20" data-phase="5">
+      <div class="step-header">
+        <div class="step-number phase-final" style="background:var(--ac2)">20</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac2)">// Tests</div>
+          <div class="step-title">Tests d'intégration — parcours complet</div>
+          <div class="step-duration">1h30</div>
+        </div>
+      </div>
+      <div class="callout callout-ok">
+        <span class="callout-icon">🏁</span>
+        <div class="callout-text">Effectuer au minimum <strong>3 passages complets</strong> du parcours. Chronomètre. Prendre en vidéo pour analyser les défauts. Corriger entre chaque passage.</div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Passage 1 : tester sections 1–4 (ligne, tunnel, obstacles)</div><div class="task-detail">Si le robot manque un virage : ajuster les tops encodeur. Si contournement trop court : augmenter la distance.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Passage 2 : tester sections 5–8 (rampes, couleur, LEDs, chrono)</div><div class="task-detail">Vérifier que les LEDs clignotent exactement à 2Hz. Le chrono NE555 est-il synchrone ?</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Passage 3 : tester sections 9–11 (passerelle, distance, tir balle)</div><div class="task-detail">Le robot ne doit pas tomber de la passerelle. La balle doit atteindre la zone du panier.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Passage 4 et 5 : parcours COMPLET chronométré</div><div class="task-detail">Comparer les temps. L'écart entre les passages doit être &lt;10% → reproductibilité validée.</div><div class="task-tag tag-time">⏱ Objectif : &lt; 5 min/passage</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Vérifier et mesurer les indices k et r de la passerelle + noter les résultats</div><div class="task-detail">k = m²/(d×M²) | r = F×m²/M². Maximiser en réduisant M ou en diminuant la flèche d.</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 21 — Veille concours -->
+    <div class="step-section" id="step-21" data-phase="5">
+      <div class="step-header">
+        <div class="step-number phase-final" style="background:var(--ac2)">21</div>
+        <div class="step-title-wrap">
+          <div class="step-phase-tag" style="color:var(--ac2)">// Jour J-1</div>
+          <div class="step-title">Préparation veille du concours</div>
+          <div class="step-duration">1h</div>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Charger toutes les batteries (6×AA ×2 jeux + alim LED)</div><div class="task-detail">Utiliser le chargeur fourni. Piles chargées = couple moteur maximal.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Uploader le code final sur l'Arduino et vérifier que tout fonctionne</div><div class="task-detail">git tag v1.0-final. Ne plus modifier le code après ce point sauf bug critique.</div><div class="task-tag tag-code">git tag v1.0-final</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Préparer la mallette : robot, batteries, laptop+USB, multimètre, tournevis, colle chaude, table lanceur plastifiée</div><div class="task-detail">Photographier la mallette préparée — preuve que tout est là.</div></div></div>
+        <div class="task" onclick="toggleTask(this)"><div class="task-check"></div><div class="task-content"><div class="task-main">Arriver 1h avant le concours pour recalibrer sur le sol exact et refaire 1 passage de test</div><div class="task-detail">La recalibration sur place est la chose la plus importante du jour J.</div><div class="task-tag tag-warn">⚠️ Ne pas négliger</div></div></div>
+      </div>
+    </div>
+
+    <!-- FINAL PANEL -->
+    <div class="step-section" id="step-final" data-phase="5">
+      <div class="final-panel">
+        <div style="font-size:3rem;margin-bottom:16px">🏆</div>
+        <h2>PRÊT POUR LE CONCOURS</h2>
+        <p>Toutes les tâches complétées. Le robot est calibré, testé, et reproductible.<br>
+        Bonne chance — l'important maintenant c'est de gérer le stress et de faire confiance au travail accompli.</p>
+        <div style="display:flex;justify-content:center;gap:24px;margin-top:28px;flex-wrap:wrap;">
+          <div class="info-card" style="min-width:140px;text-align:center">
+            <div class="ic-label">Tâches</div>
+            <div class="ic-val" id="finalDone">0/47</div>
+            <div class="ic-sub">complétées</div>
+          </div>
+          <div class="info-card" style="min-width:140px;text-align:center">
+            <div class="ic-label">Temps passé</div>
+            <div class="ic-val" id="finalTime">00:00:00</div>
+            <div class="ic-sub">depuis démarrage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- end content -->
+</div><!-- end main-wrap -->
+
+<!-- FLOATING TIMER -->
+<div class="floating-timer" id="floatTimer">
+  <div class="ft-label">Temps de travail</div>
+  <div class="ft-time" id="ftDisplay">00:00:00</div>
+  <div class="ft-done" id="ftDone">0 tâches faites</div>
+  <button class="ft-start" id="ftBtn" onclick="toggleTimer()">▶ START</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA — ALL STEPS
+// ═══════════════════════════════════════════════════════
+const STEPS = [
+  { id:'step-1',  phase:1, label:'Ouvrir & photographier'        },
+  { id:'step-2',  phase:1, label:'Inventaire Makeblock'          },
+  { id:'step-3',  phase:1, label:'Environnement dev'             },
+  { id:'step-4',  phase:2, label:'Châssis Makeblock'             },
+  { id:'step-5',  phase:2, label:'Base électronique'             },
+  { id:'step-6',  phase:2, label:'Capteurs & actionneurs'        },
+  { id:'step-7',  phase:2, label:'Lanceur balle squash'          },
+  { id:'step-8',  phase:2, label:'Coque PS Choc'                 },
+  { id:'step-9',  phase:3, label:'Câblage moteurs & alim'        },
+  { id:'step-10', phase:3, label:'Capteurs Grove Shield'         },
+  { id:'step-11', phase:3, label:'Circuit chrono NE555'          },
+  { id:'step-12', phase:3, label:'Passerelle bâtonnets'          },
+  { id:'step-13', phase:4, label:'FSM + utilitaires'             },
+  { id:'step-14', phase:4, label:'S1 : suivi ligne PD'           },
+  { id:'step-15', phase:4, label:'S2–S4 : tunnel + obstacles'    },
+  { id:'step-16', phase:4, label:'S5–S6 : rampe + couleur'       },
+  { id:'step-17', phase:4, label:'S7–S11 : retour + tir'         },
+  { id:'step-18', phase:5, label:'Calib. suiveur de ligne'       },
+  { id:'step-19', phase:5, label:'Calib. couleur + lanceur'      },
+  { id:'step-20', phase:5, label:'Tests parcours complet'        },
+  { id:'step-21', phase:5, label:'Veille concours'               },
+];
+
+// ═══════════════════════════════════════════════════════
+// SIDEBAR BUILD
+// ═══════════════════════════════════════════════════════
+const phaseNames = ['','Réception','Assemblage','Câblage','Code','Tests'];
+const phaseColors = ['','var(--ac4)','var(--ac5)','var(--ac3)','var(--ac)','var(--ac2)'];
+const sb = document.getElementById('sidebar');
+
+let currentPhase = 0;
+STEPS.forEach((s,i) => {
+  if(s.phase !== currentPhase) {
+    currentPhase = s.phase;
+    const hd = document.createElement('div');
+    hd.className = 'sb-phase-header';
+    hd.style.color = phaseColors[s.phase];
+    hd.textContent = `PHASE ${s.phase} — ${phaseNames[s.phase]}`;
+    sb.appendChild(hd);
+  }
+  const el = document.createElement('div');
+  el.className = 'sb-step';
+  el.id = 'sb-'+s.id;
+  el.innerHTML = `<div class="sb-dot"></div><div class="sb-txt">${s.label}</div>`;
+  el.onclick = () => {
+    document.getElementById(s.id).scrollIntoView({behavior:'smooth'});
+  };
+  sb.appendChild(el);
+});
+
+// ═══════════════════════════════════════════════════════
+// TASK TOGGLE
+// ═══════════════════════════════════════════════════════
+const STATE_KEY = 'robot2026_tasks';
+
+function toggleTask(el) {
+  el.classList.toggle('done');
+  const check = el.querySelector('.task-check');
+  check.textContent = el.classList.contains('done') ? '✓' : '';
+  saveState();
+  updateProgress();
+}
+
+function saveState() {
+  const tasks = document.querySelectorAll('.task');
+  const state = [];
+  tasks.forEach((t,i) => state.push(t.classList.contains('done') ? 1 : 0));
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+function loadState() {
+  try {
+    const state = JSON.parse(localStorage.getItem(STATE_KEY)||'[]');
+    const tasks = document.querySelectorAll('.task');
+    tasks.forEach((t,i) => {
+      if(state[i]) {
+        t.classList.add('done');
+        t.querySelector('.task-check').textContent = '✓';
+      }
+    });
+  } catch(e){}
+}
+
+function resetAll() {
+  if(!confirm('Réinitialiser toute la progression ?')) return;
+  document.querySelectorAll('.task.done').forEach(t => {
+    t.classList.remove('done');
+    t.querySelector('.task-check').textContent = '';
+  });
+  try { localStorage.removeItem(STATE_KEY); } catch(e) {}
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════════════
+function updateProgress() {
+  const all   = document.querySelectorAll('.task').length;
+  const done  = document.querySelectorAll('.task.done').length;
+  const pct   = all ? Math.round(done/all*100) : 0;
+
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressPct').textContent  = pct+'%';
+  document.getElementById('doneCount').textContent    = done;
+  document.getElementById('totalTasks').textContent   = all;
+  document.getElementById('finalDone').textContent    = done+'/'+all;
+
+  // Phase pills
+  const pills = document.querySelectorAll('.pill');
+  const phaseDone = [0,0,0,0,0,0]; // phase 1-5
+  const phaseTotal= [0,0,0,0,0,0];
+  STEPS.forEach(s => {
+    const sec = document.getElementById(s.id);
+    if(!sec) return;
+    const secAll  = sec.querySelectorAll('.task').length;
+    const secDone = sec.querySelectorAll('.task.done').length;
+    phaseDone[s.phase]  += secDone;
+    phaseTotal[s.phase] += secAll;
+  });
+  for(let p=1;p<=5;p++) {
+    const pill = pills[p-1];
+    if(!pill) continue;
+    pill.className = 'pill';
+    if(phaseDone[p] === phaseTotal[p] && phaseTotal[p]>0) pill.classList.add('done');
+    else if(phaseDone[p]>0) pill.classList.add('active');
+  }
+
+  // Sidebar step states
+  STEPS.forEach(s => {
+    const sec = document.getElementById(s.id);
+    const sbEl = document.getElementById('sb-'+s.id);
+    if(!sec || !sbEl) return;
+    const secAll  = sec.querySelectorAll('.task').length;
+    const secDone = sec.querySelectorAll('.task.done').length;
+    sbEl.classList.remove('done','active');
+    if(secDone === secAll && secAll>0) sbEl.classList.add('done');
+  });
+
+  // Update floating timer done count
+  document.getElementById('ftDone').textContent = done+' tâche'+(done>1?'s':'')+' faite'+(done>1?'s':'');
+}
+
+// ═══════════════════════════════════════════════════════
+// INTERSECTION OBSERVER — active step highlighting
+// ═══════════════════════════════════════════════════════
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active-section'));
+      entry.target.classList.add('active-section');
+      const id = entry.target.id;
+      document.querySelectorAll('.sb-step').forEach(s => s.classList.remove('active'));
+      const sbEl = document.getElementById('sb-'+id);
+      if(sbEl) {
+        sbEl.classList.add('active');
+        sbEl.scrollIntoView({block:'nearest',behavior:'smooth'});
+      }
+    }
+  });
+}, { threshold: 0.3, rootMargin: '-52px 0px 0px 0px' });
+
+document.querySelectorAll('.step-section').forEach(s => observer.observe(s));
+
+// ═══════════════════════════════════════════════════════
+// PHASE NAVIGATION
+// ═══════════════════════════════════════════════════════
+function scrollToPhase(id, el) {
+  document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const target = document.getElementById(id);
+  if(target) target.scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════════
+// FLOATING TIMER
+// ═══════════════════════════════════════════════════════
+let timerRunning = false;
+let timerStart   = 0;
+let timerElapsed = 0;
+let timerInterval= null;
+
+function toggleTimer() {
+  const btn = document.getElementById('ftBtn');
+  if(!timerRunning) {
+    timerStart = Date.now() - timerElapsed;
+    timerInterval = setInterval(tickTimer, 1000);
+    timerRunning = true;
+    btn.textContent = '⏸ PAUSE';
+    btn.style.background = 'var(--ac2)';
+  } else {
+    clearInterval(timerInterval);
+    timerElapsed = Date.now() - timerStart;
+    timerRunning = false;
+    btn.textContent = '▶ REPRENDRE';
+    btn.style.background = 'var(--ac)';
+  }
+}
+
+function tickTimer() {
+  timerElapsed = Date.now() - timerStart;
+  const s = Math.floor(timerElapsed/1000);
+  const h = Math.floor(s/3600);
+  const m = Math.floor((s%3600)/60);
+  const sec = s%60;
+  const fmt = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+  document.getElementById('ftDisplay').textContent = fmt;
+  document.getElementById('finalTime').textContent = fmt;
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+loadState();
+updateProgress();
+
+// Scroll spy for phase nav buttons
+const phaseSections = ['phase1','phase2','phase3','phase4','phase5'];
+const phaseObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      const idx = phaseSections.indexOf(e.target.id);
+      if(idx>=0) {
+        document.querySelectorAll('.phase-btn').forEach((b,i) => {
+          b.classList.toggle('active', i===idx);
+        });
+      }
+    }
+  });
+}, {threshold:0.5, rootMargin:'-52px 0px 0px 0px'});
+phaseSections.forEach(id => {
+  const el = document.getElementById(id);
+  if(el) phaseObs.observe(el);
+});
+</script>
+</body>
+</html>
