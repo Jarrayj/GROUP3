@@ -47,7 +47,7 @@ int SEUIL_NOIR = 35;
 
 // ── Vitesses ─────────────────────────────────────────────────────────────
 #define VITESSE_NORMALE     46
-#define VITESSE_RAMPE       58   // ← vitesse élevée pour monter la rampe avec la coque
+#define VITESSE_RAMPE       58   
 #define VITESSE_VIRAGE      26
 #define VITESSE_MIN          5
 #define VITESSE_PIVOT       20
